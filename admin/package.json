@@ -1,0 +1,63 @@
+{
+  "name": "chulcheck-admin",
+  "productName": "출석ON",
+  "version": "0.1.0",
+  "private": true,
+  "description": "출석ON — 교사용 출결 서류 관리 앱",
+  "main": "./out/main/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "dev:web": "vite --config vite.web.config.ts",
+    "build": "electron-vite build",
+    "dist:win": "npm run build && electron-builder --win nsis --publish never",
+    "templates": "tsx scripts/prepare-templates.ts",
+    "test": "vitest run",
+    "preview": "electron-vite preview"
+  },
+  "build": {
+    "appId": "kr.school.chulcheck.admin",
+    "productName": "출석ON",
+    "directories": { "output": "dist" },
+    "files": ["out/**/*"],
+    "asarUnpack": ["node_modules/pdf-to-printer/**"],
+    "extraResources": [
+      { "from": "templates", "to": "templates" },
+      { "from": "electron/main/print/hwpCom.ps1", "to": "print/hwpCom.ps1" },
+      { "from": "build/icon.png", "to": "icon.png" }
+    ],
+    "win": { "target": "nsis", "icon": "build/icon.ico" },
+    "mac": { "icon": "build/icon.icns" },
+    "linux": { "icon": "build/icon.png" },
+    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true }
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "@xmldom/xmldom": "^0.9.8",
+    "date-fns": "4.1.0",
+    "jszip": "^3.10.1",
+    "pdf-lib": "^1.17.1",
+    "pdf-to-printer": "^5.6.0",
+    "pngjs": "^7.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "xlsx": "^0.18.5",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@types/pngjs": "^6.0.5",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "electron": "^38.8.6",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^3.0.0",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.11",
+    "vitest": "^3.0.4"
+  }
+}

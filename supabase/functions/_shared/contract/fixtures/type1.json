@@ -1,0 +1,13 @@
+{
+  "classroom": { "grade": 3, "class_no": 2, "school_year": 2026 },
+  "student": { "number": 1, "name": "김하늘", "gender": "여" },
+  "request": {
+    "category": 1,
+    "start_date": "2026-09-14",
+    "end_date": "2026-09-16",
+    "period_days": 3,
+    "submitted_on": "2026-09-17",
+    "guardian_name": "김서연",
+    "fields": { "reason": "급성 장염" }
+  }
+}

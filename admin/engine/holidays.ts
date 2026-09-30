@@ -1,0 +1,30 @@
+import type { OffDay } from './types.ts'
+
+/** 연결 전 화면 계산용. 운영 공휴일은 sync-holidays가 채운다. */
+export const BUILTIN_HOLIDAYS: OffDay[] = [
+  { date: '2026-01-01', kind: 'holiday', label: '신정' },
+  { date: '2026-02-16', kind: 'holiday', label: '설날 연휴' },
+  { date: '2026-02-17', kind: 'holiday', label: '설날' },
+  { date: '2026-02-18', kind: 'holiday', label: '설날 연휴' },
+  { date: '2026-03-01', kind: 'holiday', label: '삼일절' },
+  { date: '2026-03-02', kind: 'holiday', label: '삼일절 대체공휴일' },
+  { date: '2026-05-05', kind: 'holiday', label: '어린이날' },
+  { date: '2026-05-24', kind: 'holiday', label: '부처님오신날' },
+  { date: '2026-05-25', kind: 'holiday', label: '부처님오신날 대체공휴일' },
+  { date: '2026-06-06', kind: 'holiday', label: '현충일' },
+  { date: '2026-08-15', kind: 'holiday', label: '광복절' },
+  { date: '2026-08-17', kind: 'holiday', label: '광복절 대체공휴일' },
+  { date: '2026-09-24', kind: 'holiday', label: '추석 연휴' },
+  { date: '2026-09-25', kind: 'holiday', label: '추석' },
+  { date: '2026-09-26', kind: 'holiday', label: '추석 연휴' },
+  { date: '2026-10-03', kind: 'holiday', label: '개천절' },
+  { date: '2026-10-05', kind: 'holiday', label: '개천절 대체공휴일' },
+  { date: '2026-10-09', kind: 'holiday', label: '한글날' },
+  { date: '2026-12-25', kind: 'holiday', label: '기독탄신일' },
+  { date: '2027-01-01', kind: 'holiday', label: '신정' },
+  { date: '2027-02-06', kind: 'holiday', label: '설날 연휴' },
+  { date: '2027-02-07', kind: 'holiday', label: '설날' },
+  { date: '2027-02-08', kind: 'holiday', label: '설날 연휴' },
+  { date: '2027-02-09', kind: 'holiday', label: '설날 대체공휴일' },
+  { date: '2027-03-01', kind: 'holiday', label: '삼일절' },
+]

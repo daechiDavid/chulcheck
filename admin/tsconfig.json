@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "types": ["node", "vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@engine/*": ["engine/*"],
+      "@contract/*": ["../supabase/functions/_shared/contract/*"]
+    }
+  },
+  "include": ["electron", "engine", "src", "scripts", "shared", "tests", "vite.web.config.ts", "electron.vite.config.ts"]
+}
