@@ -37,6 +37,7 @@ export function createBrowserApi(): DesktopApi {
     snapshot: async () => app.snapshot(),
     reload: async () => app.snapshot(),
     login: async (input) => { await app.login(input); return done() },
+    changeInitialPassword: async () => { throw new Error('웹 미리보기에서는 Supabase 비밀번호를 변경할 수 없습니다.') },
     logout: async () => { app.logout(); return done() },
     saveSetup: async (input) => { app.saveSetup(input); return done() },
     saveStudents: async (rows) => { const result = app.saveStudents(rows); save(); return result },

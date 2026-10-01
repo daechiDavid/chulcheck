@@ -36,7 +36,7 @@ export function present(state: DbState, settings: Settings): Snapshot {
     mode: 'local',
     db: { connected: false, message: DB_PENDING_MESSAGE },
     loadError: null,
-    session: teacher ? { email: teacher.email, teacherName: teacher.name, schoolName: teacher.schoolName } : null,
+    session: teacher ? { email: teacher.email, teacherName: teacher.name, schoolName: teacher.schoolName, mustChangePassword: false } : null,
     classroom: state.classroom,
     students: state.students.slice().sort((a, b) => a.number - b.number),
     offDays: state.offDays.slice().sort((a, b) => (a.date < b.date ? -1 : 1)),

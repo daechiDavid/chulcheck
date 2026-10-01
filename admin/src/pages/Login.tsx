@@ -67,17 +67,33 @@ export function Setup({ api, snap, onDone }: { api: DesktopApi; snap: Snapshot; 
   const [schoolYear, setSchoolYear] = useState(year)
   const [grade, setGrade] = useState(3)
   const [classNo, setClassNo] = useState(1)
+  const [newPassword, setNewPassword] = useState('')
+  const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [passwordChanged, setPasswordChanged] = useState(false)
   const [error, setError] = useState('')
+  const mustChangePassword = Boolean(snap.session?.mustChangePassword && !passwordChanged)
 
   return (
     <main className="mx-auto max-w-xl px-6 py-16">
       <p className="text-sm text-brass">초기 설정</p>
-      <h1 className="font-display text-5xl">학급을 등록합니다</h1>
+      <h1 className="font-display text-5xl">{mustChangePassword ? '첫 로그인을 마칩니다' : '학급을 등록합니다'}</h1>
+      {mustChangePassword ? (
+        <p className="mt-3 text-sm leading-6 text-ink/70">관리자가 알려준 임시 비밀번호로 로그인했습니다. 새 비밀번호와 교사 정보를 설정해 주세요.</p>
+      ) : null}
       <form
         className="sheet mt-8 p-6"
         onSubmit={async (event) => {
           event.preventDefault()
+          setError('')
           try {
+            if (!teacherName.trim() || !schoolName.trim()) throw new Error('교사 이름과 학교 이름을 입력해 주세요.')
+            if (grade < 1 || grade > 6 || classNo < 1) throw new Error('학년과 반을 확인해 주세요.')
+            if (mustChangePassword) {
+              if (newPassword.length < 8) throw new Error('새 비밀번호는 8자 이상 입력해 주세요.')
+              if (newPassword !== passwordConfirm) throw new Error('새 비밀번호가 서로 다릅니다.')
+              await api.changeInitialPassword(newPassword)
+              setPasswordChanged(true)
+            }
             onDone(await api.saveSetup({ teacherName, schoolName, schoolYear, grade, classNo }))
           } catch (err) {
             setError(err instanceof Error ? err.message : '저장하지 못했습니다.')
@@ -86,13 +102,20 @@ export function Setup({ api, snap, onDone }: { api: DesktopApi; snap: Snapshot; 
       >
         <label className="block text-sm">담임 이름<input className="field" value={teacherName} onChange={(e) => setTeacherName(e.target.value)} required /></label>
         <label className="mt-4 block text-sm">학교<input className="field" value={schoolName} onChange={(e) => setSchoolName(e.target.value)} required /></label>
+        {mustChangePassword ? (
+          <>
+            <label className="mt-4 block text-sm">새 비밀번호<input className="field" type="password" autoComplete="new-password" minLength={8} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required /></label>
+            <label className="mt-4 block text-sm">새 비밀번호 확인<input className="field" type="password" autoComplete="new-password" minLength={8} value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} required /></label>
+          </>
+        ) : null}
         <div className="mt-4 grid grid-cols-3 gap-4">
           <label className="text-sm">학년도<input className="field" type="number" value={schoolYear} onChange={(e) => setSchoolYear(Number(e.target.value))} /></label>
           <label className="text-sm">학년<input className="field" type="number" min={1} max={6} value={grade} onChange={(e) => setGrade(Number(e.target.value))} /></label>
           <label className="text-sm">반<input className="field" type="number" min={1} value={classNo} onChange={(e) => setClassNo(Number(e.target.value))} /></label>
         </div>
+        {passwordChanged ? <p className="mt-4 text-sm text-brass">비밀번호를 변경했습니다. 학급 설정을 저장해 주세요.</p> : null}
         {error ? <p className="mt-4 text-sm text-seal">{error}</p> : null}
-        <button className="btn btn-seal mt-8" type="submit">학급 만들기</button>
+        <button className="btn btn-seal mt-8" type="submit">{mustChangePassword ? '비밀번호 변경 후 학급 만들기' : '학급 만들기'}</button>
       </form>
     </main>
   )

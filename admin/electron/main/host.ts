@@ -160,6 +160,11 @@ async function dispatch(action: string, payload: Record<string, unknown> = {}): 
       await desk.login(payload as { email: string; password: string; name?: string; schoolName?: string })
       await persist()
       return desk.snapshot()
+    case 'changeInitialPassword':
+      if (!(desk instanceof RemoteApp)) throw new Error('Supabase 계정에서만 비밀번호를 변경할 수 있습니다.')
+      await desk.changeInitialPassword(String(payload.password ?? ''))
+      await persist()
+      return desk.snapshot()
     case 'logout':
       await desk.logout()
       await persist()

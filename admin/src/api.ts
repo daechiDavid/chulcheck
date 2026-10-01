@@ -8,6 +8,7 @@ export type DesktopApi = {
   snapshot: () => Promise<Snapshot>
   reload: () => Promise<Snapshot>
   login: (input: { email: string; password: string; name?: string; schoolName?: string }) => Promise<Snapshot>
+  changeInitialPassword: (password: string) => Promise<Snapshot>
   logout: () => Promise<Snapshot>
   saveSetup: (input: { teacherName: string; schoolName: string; schoolYear: number; grade: number; classNo: number }) => Promise<Snapshot>
   saveStudents: (rows: StudentInput[]) => Promise<{ snapshot: Snapshot; inserted: number; updated: number; deactivated: number }>
@@ -53,6 +54,7 @@ function electronApi(bridge: Bridge): DesktopApi {
     snapshot: () => call('snapshot'),
     reload: () => call('reload'),
     login: (input) => call('login', input),
+    changeInitialPassword: (password) => call('changeInitialPassword', { password }),
     logout: () => call('logout'),
     saveSetup: (input) => call('saveSetup', input),
     saveStudents: (rows) => call('saveStudents', { rows }),

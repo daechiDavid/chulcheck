@@ -25,6 +25,7 @@ export type StoredSession = { access_token: string; refresh_token: string }
 type DbError = { message: string; code?: string } | null
 
 const CONNECTED = 'Supabase에 연결되어 있습니다. 학부모 제출이 이 학급으로 들어옵니다.'
+const INITIAL_PASSWORD_CHANGED_KEY = 'chulcheck_initial_password_changed'
 
 /** 4자리 이하(기존 뒷자리 표시)는 번호를 바꾸지 않는다. */
 export function phoneForUpsert(value: string): string | null {
@@ -41,6 +42,7 @@ export class RemoteApp {
   loadError: string | null = null
   private client: SupabaseClient
   private email = ''
+  private mustChangePassword = false
   private channel: RealtimeChannel | null = null
   private subscribedId: string | null = null
   private refreshing: Promise<void> | null = null
@@ -82,6 +84,7 @@ export class RemoteApp {
           email: this.email,
           teacherName: this.state.teacher?.name || '',
           schoolName: this.state.teacher?.schoolName || '',
+          mustChangePassword: this.mustChangePassword,
         }
         : null,
       db: { connected: true, message: this.loadError ?? CONNECTED },
@@ -112,7 +115,27 @@ export class RemoteApp {
     return this.snapshot()
   }
 
+  async changeInitialPassword(password: string): Promise<Snapshot> {
+    if (!this.mustChangePassword) throw new Error('최초 로그인에서만 비밀번호를 변경할 수 있습니다.')
+    if (password.length < 8) throw new Error('새 비밀번호는 8자 이상 입력해 주세요.')
+
+    const { data, error } = await this.client.auth.getSession()
+    if (error || !data.session) throw new Error('다시 로그인해 주세요.')
+    const { error: updateError } = await this.client.auth.updateUser({
+      password,
+      data: {
+        ...data.session.user.user_metadata,
+        [INITIAL_PASSWORD_CHANGED_KEY]: true,
+      },
+    })
+    if (updateError) throw new Error('비밀번호를 변경하지 못했습니다. ' + updateError.message)
+
+    this.mustChangePassword = false
+    return this.snapshot()
+  }
+
   async logout(): Promise<Snapshot> {
+    this.mustChangePassword = false
     await this.channel?.unsubscribe()
     this.channel = null
     this.subscribedId = null
@@ -401,6 +424,7 @@ export class RemoteApp {
       requests = ((requestRes.data ?? []) as RequestRow[]).map(mapRequest)
     }
     const teacherRow = teacherRes.data as { id: string; name: string; school_name: string } | null
+    this.mustChangePassword = !teacherRow && user.userMetadata[INITIAL_PASSWORD_CHANGED_KEY] !== true
     const teacher: Teacher | null = teacherRow
       ? {
         id: teacherRow.id,
@@ -424,11 +448,11 @@ export class RemoteApp {
     }
   }
 
-  private async sessionUser(): Promise<{ id: string }> {
+  private async sessionUser(): Promise<{ id: string; userMetadata: Record<string, unknown> }> {
     const { data, error } = await this.client.auth.getSession()
     if (error || !data.session) throw new Error('다시 로그인해 주세요.')
     this.email = data.session.user.email ?? this.email
-    return { id: data.session.user.id }
+    return { id: data.session.user.id, userMetadata: data.session.user.user_metadata ?? {} }
   }
 
   private async catchUp(): Promise<void> {

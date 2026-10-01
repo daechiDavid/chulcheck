@@ -115,7 +115,7 @@ export type Snapshot = {
   mode: 'local' | 'remote'
   db: { connected: boolean; message: string }
   loadError: string | null
-  session: { email: string; teacherName: string; schoolName: string } | null
+  session: { email: string; teacherName: string; schoolName: string; mustChangePassword: boolean } | null
   classroom: Classroom | null
   students: Student[]
   offDays: OffDay[]

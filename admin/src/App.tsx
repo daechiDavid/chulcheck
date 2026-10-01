@@ -76,7 +76,7 @@ export function App() {
       </main>
     )
   }
-  if (!snap.classroom) return <Setup api={api} snap={snap} onDone={setSnap} />
+  if (snap.session.mustChangePassword || !snap.classroom) return <Setup api={api} snap={snap} onDone={setSnap} />
 
   const room = snap.classroom
   const detail = snap.requests.find((request) => request.id === detailId)
